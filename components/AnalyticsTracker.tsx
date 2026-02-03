@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { logEvent } from './utils/analytics';
 
 export default function AnalyticsTracker({
 	sessionId,
@@ -7,40 +8,28 @@ export default function AnalyticsTracker({
 	mediaType,
 }) {
 	const startTime = useRef(Date.now());
-
-	const logEvent = (action, metadata = {}) => {
-		const payload = JSON.stringify({
-			session_id: sessionId,
-			timestamp: new Date().toISOString(),
-			product_id: productId,
-			stream_type: isAiStream ? 'AI' : 'HUMAN',
-			media_type: mediaType, // 'VIDEO' or 'AUDIO'
-			action: action,
-			...metadata,
-		});
-
-		// sendBeacon is reliable for exit events
-		navigator.sendBeacon('/api/log', payload);
-	};
+	const sessionMetadata = { sessionId, productId, isAiStream, mediaType };
 
 	useEffect(() => {
 		// page load
-		logEvent('PAGE_VIEW_START');
+		logEvent('PAGE_VIEW_START', sessionMetadata);
 
 		// tab switching
 		const handleVisibility = () => {
 			if (document.hidden) {
-				logEvent('TAB_HIDDEN');
+				logEvent('TAB_HIDDEN', sessionMetadata);
 			} else {
-				logEvent('TAB_VISIBLE');
+				logEvent('TAB_VISIBLE', sessionMetadata);
 			}
 		};
 		document.addEventListener('visibilitychange', handleVisibility);
 
-		// tab close / navigation away
 		const handleUnload = () => {
 			const timeSpent = (Date.now() - startTime.current) / 1000;
-			logEvent('SESSION_END', { duration_seconds: timeSpent });
+			logEvent('SESSION_END', {
+				duration_seconds: timeSpent,
+				...sessionMetadata,
+			});
 		};
 		window.addEventListener('beforeunload', handleUnload);
 
