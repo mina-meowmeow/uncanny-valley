@@ -1,13 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/lib/contexts/sessionsContext';
+import { LoginResponse } from '@/lib/types/auth';
 
 export default function LoginPage() {
 	const [sessionId, setSessionId] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const router = useRouter();
+	const { setSession, session } = useSession();
+
+	useEffect(() => {
+		// check if there is already a session
+		if (session?.sessionId.trim()) {
+			router.push('/');
+			return;
+		}
+	});
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -24,13 +35,16 @@ export default function LoginPage() {
 			});
 
 			if (!response.ok) {
-				const data = await response.json();
+				const data: LoginResponse = await response.json();
 				setError(data.message || 'Invalid session ID');
 				setLoading(false);
 				return;
 			}
 
-			// Redirect to home on success
+			const data: LoginResponse = await response.json();
+			console.log('Login response data:', data);
+			setSession(data ?? null);
+
 			router.push('/');
 		} catch (err) {
 			setError('An error occurred. Please try again.');

@@ -1,35 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
+import { useSession } from '@/lib/contexts/sessionsContext';
 
 export default function AuthStatus() {
-	const [sessionId, setSessionId] = useState<string | null>(null);
-	const [loading, setLoading] = useState(true);
 	const router = useRouter();
-
-	useEffect(() => {
-		const verifyAuth = async () => {
-			try {
-				const response = await fetch('/api/auth/verify');
-				if (response.ok) {
-					const data = await response.json();
-					setSessionId(data.sessionId);
-				}
-			} catch (error) {
-				console.error('Auth verification failed:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		verifyAuth();
-	}, []);
+	const { session, setSession, loading } = useSession();
 
 	const handleLogout = async () => {
 		try {
 			await fetch('/api/auth/logout', { method: 'POST' });
+			setSession(null);
 			router.push('/login');
 		} catch (error) {
 			console.error('Logout failed:', error);
@@ -40,14 +22,10 @@ export default function AuthStatus() {
 		return null;
 	}
 
-	if (!sessionId) {
-		return null;
-	}
-
 	return (
 		<div className="flex items-center gap-4">
 			<span className="text-sm text-muted-foreground">
-				Session: <span className="font-mono text-xs">{sessionId}</span>
+				Session: <span className="font-mono text-xs">{session?.sessionId}</span>
 			</span>
 			<button
 				onClick={handleLogout}

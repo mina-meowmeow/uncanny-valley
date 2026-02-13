@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { PRODUCTS } from '@/lib/mocks/mockProducts';
 
 const colors = [
 	{ value: 'black', label: 'Black' },
@@ -18,17 +19,36 @@ const colors = [
 	{ value: 'olive', label: 'Olive' },
 ];
 
-export function ProductDetails() {
+type ProductDetailsProps = {
+	productId: string;
+};
+
+export function ProductDetails({ productId }: ProductDetailsProps) {
 	const [selectedColor, setSelectedColor] = useState('');
 	const [isWishlisted, setIsWishlisted] = useState(false);
+
+	const product = useMemo(
+		() => PRODUCTS.find((p) => p.id === productId),
+		[productId],
+	);
+
+	if (!product) {
+		return (
+			<div className="space-y-4">
+				<div className="aspect-[4/3] rounded-lg overflow-hidden border border-border bg-muted flex items-center justify-center">
+					<p className="text-muted-foreground">Product not found</p>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="space-y-4">
 			{/* Product Image */}
 			<div className="aspect-[4/3] rounded-lg overflow-hidden border border-border bg-muted">
 				<img
-					src="/fashion-product-clothing-item.jpg"
-					alt="Product Image"
+					src={product.image}
+					alt={product.title}
 					className="w-full h-full object-cover"
 				/>
 			</div>
@@ -36,13 +56,17 @@ export function ProductDetails() {
 			{/* Product Info */}
 			<div className="space-y-3">
 				<div className="flex items-start justify-between gap-4">
-					<h1 className="text-2xl font-bold text-foreground">Product title</h1>
-					<span className="text-2xl font-bold text-foreground">$xxx</span>
+					<h1 className="text-2xl font-bold text-foreground">
+						{product.title}
+					</h1>
+					<span className="text-2xl font-bold text-foreground">
+						${product.price}
+					</span>
 				</div>
 
 				<p className="text-muted-foreground leading-relaxed">
-					Product Description Lorem ipsum dolor sit amet, consectetur adipiscing
-					elit, sed do eiusmod tempor
+					High-quality product with premium materials and craftsmanship. Perfect
+					for everyday use or special occasions.
 				</p>
 
 				{/* Color Selector */}

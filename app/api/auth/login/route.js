@@ -21,8 +21,7 @@ export async function POST(request) {
 		const { data, error } = await supabaseClient
 			.from('user_sessions')
 			.select()
-			.eq('session_id', sessionId.trim())
-			.single();
+			.eq('session_id', sessionId.trim());
 
 		if (error) {
 			console.log('error found in login', error);
@@ -35,7 +34,7 @@ export async function POST(request) {
 		if (data.length !== 1) {
 			console.log('There is no session matching the session ID');
 			return Response.json(
-				{ authenticated: false, message: 'Invalid session data.' },
+				{ message: 'Invalid session data.' },
 				{ status: 401 },
 			);
 		}
@@ -53,7 +52,7 @@ export async function POST(request) {
 			{
 				message: 'Login successful',
 				sessionId: sessionId.trim(),
-				userData: data[0].userData,
+				userData: data[0].user_data,
 			},
 			{ status: 200 },
 		);

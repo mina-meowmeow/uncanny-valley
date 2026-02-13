@@ -7,7 +7,7 @@ export async function GET() {
 		const sessionId = cookieStore.get('auth_session')?.value;
 
 		if (!sessionId) {
-			return Response.json({ authenticated: false }, { status: 401 });
+			return Response.json({ message: 'No session ID found' }, { status: 401 });
 		}
 
 		const supabaseClient = createClient(
@@ -18,14 +18,12 @@ export async function GET() {
 		const { data, error } = await supabaseClient
 			.from('user_sessions')
 			.select()
-			.eq('session_id', sessionId.trim())
-			.single();
+			.eq('session_id', sessionId.trim());
 
 		if (error) {
 			console.log('error handled at /verify', error);
 			return Response.json(
 				{
-					authenticated: false,
 					message: 'Session ID not found in the database.',
 				},
 				{ status: 401 },
@@ -35,14 +33,20 @@ export async function GET() {
 		if (data.length !== 1) {
 			console.log('There is no session matching the session ID');
 			return Response.json(
-				{ authenticated: false, message: 'Invalid session data.' },
+				{ message: 'Invalid session data.' },
 				{ status: 401 },
 			);
 		}
 
-		return Response.json({ authenticated: true, sessionId }, { status: 200 });
+		return Response.json(
+			{
+				sessionId,
+				userData: data[0].user_data,
+			},
+			{ status: 200 },
+		);
 	} catch (error) {
 		console.error('Verify error:', error);
-		return Response.json({ authenticated: false }, { status: 401 });
+		return Response.json({ message: 'Verification failed' }, { status: 401 });
 	}
 }
