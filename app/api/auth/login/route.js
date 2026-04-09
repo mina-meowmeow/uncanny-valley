@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
+import { sign } from 'jsonwebtoken';
 
 export async function POST(request) {
 	try {
@@ -39,8 +40,21 @@ export async function POST(request) {
 			);
 		}
 
+		const payload = {
+			aud: 'authenticated',
+			role: 'authenticated',
+			session_id: data[0].session_id,
+			sub: data[0].session_id,
+			view_type: data[0].view_type,
+			presenter_type: data[0].presenter_type,
+		};
+
+		const token = sign(payload, process.env.SUPABASE_JWT_SECRET, {
+			expiresIn: '24h',
+		});
+
 		const cookieStore = await cookies();
-		cookieStore.set('auth_session', sessionId.trim(), {
+		cookieStore.set('auth_session', token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'lax',
@@ -52,7 +66,6 @@ export async function POST(request) {
 			{
 				message: 'Login successful',
 				sessionId: sessionId.trim(),
-				userData: data[0].user_data,
 			},
 			{ status: 200 },
 		);

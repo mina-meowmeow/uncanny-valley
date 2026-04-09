@@ -7,10 +7,8 @@ import React, {
 	useMemo,
 	useState,
 } from 'react';
-import { useRouter } from 'next/navigation';
 
 export type UserData = {
-	name?: string;
 	experimentConfig?: {
 		viewType?: 'product' | 'livestream';
 		presenterType?: 'ai' | 'human';
@@ -21,6 +19,8 @@ export type UserData = {
 export type SessionData = {
 	sessionId?: string;
 	userData?: UserData;
+	view_type?: 'product' | 'livestream';
+	presenter_type?: 'ai' | 'human';
 } | null;
 
 type SessionContextValue = {
@@ -44,45 +44,14 @@ export const SessionsProvider = ({
 }: SessionsProviderProps) => {
 	const [session, setSession] = useState<SessionData>(initialSession);
 	const [loading, setLoading] = useState(true);
-	const router = useRouter();
 
 	useEffect(() => {
-		const logoutAndRedirect = async () => {
-			try {
-				await fetch('/api/auth/logout', { method: 'POST' });
-			} catch (error) {
-				console.error('Auto-logout failed:', error);
-			} finally {
-				router.replace('/login');
-			}
-		};
-
-		const verifyAuth = async () => {
-			try {
-				const response = await fetch('/api/auth/verify');
-				if (response.ok) {
-					const data: SessionData = await response.json();
-					if (data?.sessionId) {
-						setSession(data ?? null);
-					} else {
-						setSession(null);
-						await logoutAndRedirect();
-					}
-				} else {
-					setSession(null);
-					await logoutAndRedirect();
-				}
-			} catch (error) {
-				console.error('Auth verification failed:', error);
-				setSession(null);
-				await logoutAndRedirect();
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		verifyAuth();
-	}, [router]);
+		// If we already have an initial session (from SSR), use it and skip fetching
+		if (initialSession) {
+			setLoading(false);
+			return;
+		}
+	}, [initialSession]);
 
 	const value = useMemo(
 		() => ({ session, setSession, loading }),

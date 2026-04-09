@@ -5,11 +5,10 @@ import ExperimentView from '@/components/pages/experiment/ExperimentView';
 
 function Home() {
 	const { session } = useSession();
-	console.log('Session data on Home page:', session);
 	return (
 		<ExperimentView
-			viewType={session?.userData?.experimentConfig?.viewType || 'product'}
-			presenterType={session?.userData?.experimentConfig?.presenterType || 'AI'}
+			viewType={session?.view_type}
+			presenterType={session?.presenter_type}
 		/>
 	);
 }

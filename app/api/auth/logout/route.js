@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 export async function POST() {
 	try {
 		const cookieStore = await cookies();
+
+		// This tells the browser to destroy the JWT cookie
 		cookieStore.delete('auth_session');
 
 		return Response.json({ message: 'Logout successful' }, { status: 200 });
