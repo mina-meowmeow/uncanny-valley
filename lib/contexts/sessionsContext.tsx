@@ -17,7 +17,7 @@ export type UserData = {
 } | null;
 
 export type SessionData = {
-	sessionId?: string;
+	session_id?: string;
 	userData?: UserData;
 	view_type?: 'product' | 'livestream';
 	presenter_type?: 'ai' | 'human';

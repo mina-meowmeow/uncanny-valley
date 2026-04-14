@@ -3,9 +3,9 @@ import { Header } from '@/components/header';
 import { ProductDetails } from '@/components/product-details';
 import { LivestreamPlayer } from '@/components/livestream-player';
 import { RelatedProducts } from '@/components/related-products';
-
 import { useParams } from 'next/navigation';
 import { useSession } from '@/lib/contexts/sessionsContext';
+
 export default function ProductPage() {
 	const { session } = useSession();
 	const params = useParams();
@@ -20,7 +20,11 @@ export default function ProductPage() {
 						viewType={session?.view_type}
 						presenterType={session?.presenter_type}
 					/>
-					<LivestreamPlayer />
+					<LivestreamPlayer
+						productId={params.id}
+						viewType={session?.view_type}
+						presenterType={session?.presenter_type}
+					/>
 				</div>
 				<RelatedProducts />
 			</main>

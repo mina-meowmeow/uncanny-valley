@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useSession } from '@/lib/contexts/sessionsContext';
+import { useEffect } from 'react';
 
 export default function AuthStatus() {
 	const router = useRouter();
@@ -18,14 +19,32 @@ export default function AuthStatus() {
 		}
 	};
 
+	useEffect(() => {
+		// If loading is done and there's no session, redirect to login
+		if (!loading && !session) {
+			router.push('/login');
+		}
+	}, [session, loading, router]);
+
+	// 1. Show loading state while fetching session data
 	if (loading) {
-		return null;
+		return <div>Loading...</div>;
 	}
 
+	// 2. Prevent the authenticated UI from rendering while the redirect is happening
+	if (!session) {
+		return null; // or you could return a subtle <div className="invisible">...</div>
+	}
+
+	console.log('from authstatus:', session);
+	// 3. We now safely know `session` exists, so we don't even need the optional chaining (?.)
 	return (
 		<div className="flex items-center gap-4">
 			<span className="text-sm text-muted-foreground">
-				Session: <span className="font-mono text-xs">{session?.sessionId}</span>
+				Session:{' '}
+				<span className="font-mono text-xs">
+					{session.session_id ? session.session_id : 'N/A'}
+				</span>
 			</span>
 			<button
 				onClick={handleLogout}

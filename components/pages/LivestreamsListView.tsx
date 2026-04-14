@@ -22,7 +22,7 @@ function StreamCard({ streamItem }) {
 		(product) => product.id === streamItem.productId,
 	);
 	return (
-		<Link href="/" className="block group">
+		<Link href="/" className="block group" passHref>
 			<div className="relative aspect-[9/14] rounded-lg overflow-hidden bg-foreground">
 				<img
 					src={streamItem.thumbnailImage || '/placeholder.svg'}

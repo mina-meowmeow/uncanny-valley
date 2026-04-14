@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { useSession } from '@/lib/contexts/sessionsContext';
+import { LIVESTREAMS } from '@/lib/mocks/mockLivestreams';
 
 type HostType = 'human' | 'ai-avatar' | 'stylized' | 'voice-only';
 
@@ -37,7 +37,13 @@ interface FloatingHeart {
 	x: number;
 }
 
-export function LivestreamPlayer() {
+export function LivestreamPlayer({ productId, viewType, presenterType }) {
+	// replace this with some kind of fetching later
+	const livestreamObject = LIVESTREAMS.find(
+		(stream) =>
+			stream.productId === productId && stream.hostType === presenterType,
+	);
+
 	const [hostType, setHostType] = useState<HostType>('ai-avatar');
 	const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
 	const [newMessage, setNewMessage] = useState('');
@@ -110,7 +116,7 @@ export function LivestreamPlayer() {
 						<div>
 							<div className="flex items-center gap-2">
 								<span className="font-semibold text-white text-sm">
-									Host info/Name
+									{livestreamObject.hostName}
 								</span>
 								{getHostLabel() && (
 									<Badge
@@ -132,28 +138,40 @@ export function LivestreamPlayer() {
 				</div>
 
 				{/* Video Area */}
-				<div className="relative aspect-[9/12] max-h-[400px] bg-[#1a1a1a]">
+				<div className="relative aspect-[9/12] bg-[#1a1a1a]">
 					{/* Host Display */}
-					<div className="absolute inset-0 flex items-center justify-center">
-						{hostType === 'voice-only' ? (
-							<div className="flex flex-col items-center gap-4">
-								<div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center">
-									<div className="w-16 h-16 rounded-full bg-white/20 animate-pulse" />
+					{livestreamObject?.videoUrl ? (
+						<video
+							src={livestreamObject.videoUrl}
+							className="block h-full w-full object-cover object-center"
+							autoPlay
+							loop
+							muted
+							playsInline
+							preload="metadata"
+						/>
+					) : (
+						<div className="absolute inset-0 flex items-center justify-center">
+							{hostType === 'voice-only' ? (
+								<div className="flex flex-col items-center gap-4">
+									<div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center">
+										<div className="w-16 h-16 rounded-full bg-white/20 animate-pulse" />
+									</div>
+									<span className="text-white/60 text-sm">Audio Only</span>
 								</div>
-								<span className="text-white/60 text-sm">Audio Only</span>
-							</div>
-						) : (
-							<div className="w-32 h-32 rounded-full bg-white flex items-center justify-center">
-								<svg
-									className="w-20 h-20 text-[#1a1a1a]"
-									fill="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-								</svg>
-							</div>
-						)}
-					</div>
+							) : (
+								<div className="w-32 h-32 rounded-full bg-white flex items-center justify-center">
+									<svg
+										className="w-20 h-20 text-[#1a1a1a]"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+									</svg>
+								</div>
+							)}
+						</div>
+					)}
 
 					{/* Floating Hearts */}
 					<div className="absolute right-4 bottom-20 w-12">
@@ -234,7 +252,7 @@ export function LivestreamPlayer() {
 			</div>
 
 			{/* Host Type Selector (for experiment control) */}
-			<div className="bg-muted rounded-lg p-3">
+			{/* <div className="bg-muted rounded-lg p-3">
 				<p className="text-xs text-muted-foreground mb-2 font-medium">
 					Experiment: Host Condition
 				</p>
@@ -253,7 +271,7 @@ export function LivestreamPlayer() {
 						),
 					)}
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 }

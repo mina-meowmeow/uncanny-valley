@@ -1,15 +1,37 @@
-interface LivestreamItem {
-	id: string;
-	hostName: string;
-	hostType: 'human' | 'ai_avatar' | 'stylized_avatar' | 'voice_only';
-	hostImage: string;
-	thumbnailImage: string;
-	title: string;
-	viewerCount: number;
-	productId?: string;
-}
+// interface LivestreamItem {
+// 	id: string;
+// 	hostName: string;
+// 	hostType: 'human' | 'ai_avatar' | 'stylized_avatar' | 'voice_only';
+// 	hostImage: string;
+// 	thumbnailImage: string;
+// 	title: string;
+// 	viewerCount: number;
+// 	productId?: string;
+// }
 
-const LIVESTREAMS: LivestreamItem[] = [
+const LIVESTREAMS = [
+	{
+		id: 'live-human-0',
+		hostName: 'Sarah Chen',
+		hostType: 'human',
+		hostImage: '/images/live-host-1.jpg',
+		thumbnailImage: '/images/live-host-1.jpg',
+		videoUrl: '/assets/human_sample.mp4',
+		title: 'Electric Toothbrush - Unboxing & Review',
+		viewerCount: 1243,
+		productId: '9',
+	},
+	{
+		id: 'live-human-0',
+		hostName: 'Aria',
+		hostType: 'ai',
+		hostImage: '/images/live-host-2.jpg',
+		thumbnailImage: '/images/live-host-2.jpg',
+		videoUrl: '/assets/ai_sample.mp4',
+		title: 'Electric Toothbrush - Unboxing & Review',
+		viewerCount: 1243,
+		productId: '9',
+	},
 	{
 		id: 'live-1',
 		hostName: 'Sarah Chen',
@@ -22,7 +44,7 @@ const LIVESTREAMS: LivestreamItem[] = [
 	},
 	{
 		id: 'live-2',
-		hostName: 'AI Host Nova',
+		hostName: 'ai Host Nova',
 		hostType: 'ai_avatar',
 		hostImage: '/images/live-host-4.jpg',
 		thumbnailImage: '/images/live-host-4.jpg',
@@ -62,7 +84,7 @@ const LIVESTREAMS: LivestreamItem[] = [
 	},
 	{
 		id: 'live-6',
-		hostName: 'AI Host Aria',
+		hostName: 'ai Host Aria',
 		hostType: 'ai_avatar',
 		hostImage: '/images/live-host-4.jpg',
 		thumbnailImage: '/images/live-host-4.jpg',

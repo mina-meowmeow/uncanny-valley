@@ -14,7 +14,7 @@ export default function LoginPage() {
 
 	useEffect(() => {
 		// check if there is already a session
-		if (session?.sessionId.trim()) {
+		if (session?.session_id.trim()) {
 			router.push('/');
 			return;
 		}
