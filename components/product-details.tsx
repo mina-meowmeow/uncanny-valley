@@ -23,10 +23,8 @@ const colors = [
 
 type ProductDetailsProps = {
 	productId: string;
-	experimentConfig: {
-		presenterType?: string;
-		viewType?: string;
-	};
+	presenterType?: string;
+	viewType?: string;
 };
 
 export function ProductDetails({
