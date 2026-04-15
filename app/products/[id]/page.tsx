@@ -26,7 +26,7 @@ export default function ProductPage() {
 						presenterType={session?.presenter_type}
 					/>
 				</div>
-				<RelatedProducts />
+				<RelatedProducts currentProductId={params.id} />
 			</main>
 		</div>
 	);

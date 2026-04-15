@@ -116,7 +116,7 @@ export function LivestreamPlayer({ productId, viewType, presenterType }) {
 						<div>
 							<div className="flex items-center gap-2">
 								<span className="font-semibold text-white text-sm">
-									{livestreamObject.hostName}
+									{livestreamObject?.hostName || 'No streamer found'}
 								</span>
 								{getHostLabel() && (
 									<Badge

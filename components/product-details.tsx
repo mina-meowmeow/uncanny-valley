@@ -13,7 +13,6 @@ import {
 import { PRODUCTS } from '@/lib/mocks/mockProducts';
 import { logEvent } from './utils/analytics';
 import AnalyticsTracker from './AnalyticsTracker';
-import { useSession } from '@/lib/contexts/sessionsContext';
 
 const colors = [
 	{ value: 'black', label: 'Black' },
@@ -43,6 +42,8 @@ export function ProductDetails({
 		() => PRODUCTS.find((p) => p.id === productId),
 		[productId],
 	);
+
+	console.log(product);
 
 	const handleWishlist = () => {
 		if (!isWishlisted) {
@@ -103,10 +104,13 @@ export function ProductDetails({
 						</span>
 					</div>
 
-					<p className="text-muted-foreground leading-relaxed">
-						High-quality product with premium materials and craftsmanship.
-						Perfect for everyday use or special occasions.
-					</p>
+					<ul className="my-6 ml-6 list-disc [&>li]:mt-2">
+						{product.description.map((line, index) => (
+							<li key={index}>
+								<p className="text-muted-foreground leading-relaxed">{line}</p>
+							</li>
+						))}
+					</ul>
 
 					{/* Color Selector */}
 					<Select value={selectedColor} onValueChange={setSelectedColor}>
